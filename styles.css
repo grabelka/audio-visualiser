@@ -1,0 +1,49 @@
+body {
+  font-family: 'Roboto', sans-serif;
+  padding: 2em;
+  padding-top: 1em;
+}
+
+#icon {
+  height: 3em;
+  width: 3em;
+}
+
+.title {
+  display: flex;
+}
+
+.custom-file-upload {
+  display: inline-block;
+  background-color: darksalmon;
+  color: #fff;
+  padding: 6px 12px;
+  cursor: pointer;
+  border: 1px solid darksalmon;
+  border-radius: 4px;
+  margin: 0.5em;
+  margin-left: -0.7em;
+}
+
+.custom-file-upload input[type="file"] {
+  display: none;
+}
+
+.custom-file-upload:hover {
+  background-color: rgb(234, 118, 80);
+}
+
+canvas {
+  margin-top: 1em;
+  display: block;
+  width: 100%;
+  height: 16em;
+  max-width: 600px;
+}
+
+@media (max-width: 768px) {
+  #icon {
+    height: 2em;
+    width: 2em;
+  }
+}
