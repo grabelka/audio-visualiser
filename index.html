@@ -12,24 +12,64 @@
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
-    <div class="title">
-      <img id="icon" src="images/favicon.png" alt="icon"/>
-      <h1>Audio Visualiser</h1>
-    </div>
-    <div class="container row justify-content-start">
-      <div class="col-md-2">
-        <label class="custom-file-upload">
-          <input type="file" id="audioInput" accept="audio/*" />
-          <span>Choose Audio</span>
+    <main>
+      <div class="title">
+        <img id="icon" src="images/favicon.png" alt="icon"/>
+        <h1>Audio Visualiser</h1>
+      </div>
+      <h3>Select mode:</h3>
+      <div class="radio-container">
+        <label class="radio-label">
+          <input type="radio" class="radio-input" id="option1" name="options" value="Standard" checked>
+          <span class="checkmark"></span>
+          Standard
         </label>
       </div>
-      <audio controls id="audioPlayer" class="col-md-4">
-        Your browser does not support the audio element.
-      </audio>
-    </div>
-    <input type="color" id="colorPicker">
-    <canvas id="canvasElement"></canvas>
-    
+      <div class="radio-container">
+        <label class="radio-label">
+          <input type="radio" class="radio-input" id="option2" name="options" value="Bars">
+          <span class="checkmark"></span>
+          Bars
+        </label>
+      </div>
+      <div class="radio-container">
+        <label class="radio-label">
+          <input type="radio" class="radio-input" id="option3" name="options" value="Circles">
+          <span class="checkmark"></span>
+          Circles
+        </label>
+      </div>
+      <br>
+      <br>
+      <div class="container row justify-content-start">
+        <div class="col-md-2">
+          <label class="custom-file-upload">
+            <input type="file" id="audioInput" accept="audio/*" />
+            <span>Choose Audio</span>
+          </label>
+        </div>
+        <audio controls id="audioPlayer" class="col-md-4">
+          Your browser does not support the audio element.
+        </audio>
+      </div>
+      <br>
+      <span class="gradient-span">Use Gradient:</span>
+      <div class="custom-checkbox">
+        <input type="checkbox" id="linearGradientCheckbox">
+        <label for="linearGradientCheckbox" id="linearGradientCheckboxLabel">Linear</label>
+      </div>
+      <div class="custom-checkbox">
+        <input type="checkbox" id="radialGradientCheckbox">
+        <label for="radialGradientCheckbox" id="radialGradientCheckboxLabel">Radial</label>
+      </div>
+      <input type="color" id="colorPicker" value="#FF0000">
+      <input type="color" id="colorPicker2" value="#00FF00">
+      <input type="color" id="colorPicker3" value="#0000FF">
+      <canvas id="canvasElement"></canvas>
+    </main>
+    <footer>
+      <p>&copy; Anastasia Grabovska | 2023</p>
+    </footer>  
     <script src="main.js"></script>
   </body>
 </html>

@@ -1,7 +1,19 @@
 body {
   font-family: 'Roboto', sans-serif;
+}
+
+main {
   padding: 2em;
   padding-top: 1em;
+  padding-bottom: 5em;
+}
+
+canvas {
+  margin-top: 1em;
+  display: block;
+  width: 100%;
+  height: 24em;
+  max-width: 700px;
 }
 
 #icon {
@@ -11,9 +23,11 @@ body {
 
 .title {
   display: flex;
+  padding-bottom: 1em;
 }
 
 .custom-file-upload {
+  font-size: large;
   display: inline-block;
   background-color: darksalmon;
   color: #fff;
@@ -33,17 +47,121 @@ body {
   background-color: rgb(234, 118, 80);
 }
 
-canvas {
-  margin-top: 1em;
+#colorPicker2, #colorPicker3 {
+  visibility: hidden;
+}
+
+.radio-container {
+  display: inline-block;
+  margin-right: 20px;
+}
+
+.radio-label {
+  position: relative;
+  padding-left: 25px;
+  cursor: pointer;
+}
+
+.radio-input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 18px;
+  width: 18px;
+  background-color: #eee;
+  border-radius: 50%;
+}
+
+.radio-input:checked ~ .checkmark {
+  background-color: darksalmon;
+}
+
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.radio-input:checked ~ .checkmark:after {
   display: block;
-  width: 100%;
-  height: 16em;
-  max-width: 600px;
+}
+
+.checkmark:after {
+  top: 6px;
+  left: 6px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: white;
+}
+
+.gradient-span {
+  padding-right: 1em;
+  font-size: x-large;
+}
+
+.custom-checkbox {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 20px;
+}
+
+.custom-checkbox input[type="checkbox"] {
+  margin-right: 5px;
+}
+
+.color-picker {
+  margin-left: 20px;
+}
+
+.custom-checkbox input[type="checkbox"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 1px solid black;
+  border-radius: 3px;
+}
+
+.custom-checkbox input[type="checkbox"]:checked {
+  background-color: darksalmon; 
+}
+
+.custom-checkbox label, .color-picker {
+  font-weight: bold;
+}
+
+footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;  
+  text-align: center;
+  padding: 10px;
+  background-color: #fff;
+  color: rgba(0, 0, 0, 0.8);
+  border-top: 1px solid rgba(0, 0, 0, 0.6);
+}
+
+@media (max-width: 1200px) {
+  .custom-file-upload {
+    font-size: medium;
+  }
 }
 
 @media (max-width: 768px) {
   #icon {
     height: 2em;
     width: 2em;
+  }
+
+  canvas {
+    height: 16em;
   }
 }

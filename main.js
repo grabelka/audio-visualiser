@@ -3,6 +3,10 @@ const ctx = canvas.getContext('2d');
 
 const audioInput = document.getElementById("audioInput");
 const audioPlayer = document.getElementById("audioPlayer");
+const linearGradientCheckbox = document.getElementById('linearGradientCheckbox');
+const radialGradientCheckbox = document.getElementById('radialGradientCheckbox');
+const radioButtons = document.getElementsByName('options');
+let radioButton = 'Standard';
 let selectedFile = '';
 let audioContext = null;
 let analyser = null;
@@ -14,8 +18,49 @@ colorPicker.addEventListener('input', () => {
   visualizerColor = colorPicker.value;
 });
 
-audioInput.addEventListener("change", function () {
+const colorPicker2 = document.getElementById('colorPicker2');
+let visualizerColor2 = colorPicker2.value;
+colorPicker2.addEventListener('input', () => {
+  visualizerColor2 = colorPicker2.value;
+});
 
+const colorPicker3 = document.getElementById('colorPicker3');
+let visualizerColor3 = colorPicker3.value;
+colorPicker3.addEventListener('input', () => {
+  visualizerColor3 = colorPicker3.value;
+});
+
+linearGradientCheckbox.addEventListener("change", function () {
+  if (linearGradientCheckbox.checked) {
+    radialGradientCheckbox.checked = false;
+    colorPicker2.style.visibility = "visible";
+    colorPicker3.style.visibility = "visible";
+  } else {
+    colorPicker2.style.visibility = "hidden";
+    colorPicker3.style.visibility = "hidden";
+  }
+});
+
+radialGradientCheckbox.addEventListener("change", function () {
+  if (radialGradientCheckbox.checked) {
+    linearGradientCheckbox.checked = false;
+    colorPicker2.style.visibility = "visible";
+    colorPicker3.style.visibility = "visible";
+  } else {
+    colorPicker2.style.visibility = "hidden";
+    colorPicker3.style.visibility = "hidden";
+  }
+});
+
+radioButtons.forEach(radio => {
+  radio.addEventListener('change', () => {
+    if (radio.checked) {
+      radioButton = radio.value;
+    }
+  });
+});
+
+audioInput.addEventListener("change", function () {
   selectedFile = audioInput.files[0];
 
   if (selectedFile) {
@@ -41,17 +86,63 @@ function visualize() {
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  const barWidth = (canvas.width / bufferLength) * 10;
-  let x = 0;
+  // gradients
+  if (linearGradientCheckbox.checked) {
+    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    gradient.addColorStop(0, visualizerColor3);
+    gradient.addColorStop(0.5, visualizerColor2);
+    gradient.addColorStop(1, visualizerColor);
+    ctx.fillStyle = gradient;
+  } else if (radialGradientCheckbox.checked) {
+    const gradient = ctx.createRadialGradient(canvas.width/2, canvas.height/2, canvas.height/15, canvas.width/2, canvas.height/2, canvas.height*1.2);
+    gradient.addColorStop(0, visualizerColor);
+    gradient.addColorStop(0.5, visualizerColor2);
+    gradient.addColorStop(1, visualizerColor3);
+    ctx.fillStyle = gradient;
+    ctx.arc(canvas.width/2, canvas.height/2, canvas.width/2, 0, Math.PI * 2);
+  } else {
+    ctx.fillStyle = visualizerColor;
+  }
 
-  dataArray.forEach(value => {
-    const barHeight = value;
+  // standard
+  if (radioButton == 'Standard') {
+    const barWidth = (canvas.width / bufferLength) * 10;
+    let x = 0;
 
-    ctx.fillStyle = visualizerColor; 
-    ctx.fillRect(x, canvas.height - barHeight / 1.5, barWidth, barHeight / 1.5);
+    dataArray.forEach(value => {
+      const barHeight = value / 1.4;
+      ctx.fillRect(x, (canvas.height - barHeight) / 2 , barWidth, barHeight);
 
-    x += barWidth + 0.1;
-  });
+      x += barWidth + 1;
+    })
+  };
+  
+
+  // bars
+  if (radioButton == 'Bars') {
+    const barWidth = (canvas.width / bufferLength) * 10;
+    let x = 0;
+
+    dataArray.forEach(value => {
+      const barHeight = value / 1.4;
+      ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+
+      x += barWidth + 1;
+    })
+  };
+
+  // circles
+  if (radioButton == 'Circles') {
+
+    dataArray.forEach(value => {
+      const circleRadius = (value / 255) * 10;
+      const x = Math.random() * canvas.width;
+      const y = Math.random() * canvas.height;
+      ctx.beginPath();
+      ctx.arc(x, y, circleRadius, 0, Math.PI * 2);
+      ctx.fill();
+    })
+  };
 
   requestAnimationFrame(visualize);
 }
