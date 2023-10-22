@@ -10,11 +10,11 @@ The Audio Visualizer is a web-based application that provides real-time visualiz
 
 ## Key Features
 
-- **Real-Time Audio Visualization:** Experience audio visualizations that react in real-time to the music or audio input.
+- **Real-Time Audio Visualization:** Experience audio visualizations that react in real-time to the audio input.
 
 - **Audio File Support:** Upload and visualize audio from files in popular formats such as MP3, WAV, and Ogg.
 
-- **Customizable Visual Effects:** Choose from various visualization styles, including waveform, frequency bars, and particle effects.
+- **Customizable Visual Effects:** Choose from various visualization styles, including waveform, frequency bars, particle effects and 3d.
 
 - **Color Customization:** Customize the color scheme and gradient to create visually appealing effects.
 
@@ -30,3 +30,4 @@ The Audio Visualizer is a web-based application that provides real-time visualiz
 - CSS3
 - JavaScript
 - Web Audio API
+- Three.js

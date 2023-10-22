@@ -57,6 +57,9 @@ radioButtons.forEach(radio => {
     if (radio.checked) {
       radioButton = radio.value;
     }
+    if (radioButton == '3d') {
+      window.location.href = "./3d/index.html";
+    } 
   });
 });
 
@@ -64,12 +67,17 @@ audioInput.addEventListener("change", function () {
   selectedFile = audioInput.files[0];
 
   if (selectedFile) {
-    if (source) {
+    if (source && source.mediaElement !== null) {
       source.disconnect(); 
     }
+    source = null; 
+    audioPlayer.src = "";
     const objectURL = URL.createObjectURL(selectedFile);
     audioPlayer.src = objectURL;
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioContext.state === 'suspended') {
+      audioContext.resume();
+    }
     analyser = audioContext.createAnalyser();
     source = audioContext.createMediaElementSource(audioPlayer);
     source.connect(analyser);
@@ -110,7 +118,7 @@ function visualize() {
     let x = 0;
 
     dataArray.forEach(value => {
-      const barHeight = value / 1.4;
+      const barHeight = value / 2;
       ctx.fillRect(x, (canvas.height - barHeight) / 2 , barWidth, barHeight);
 
       x += barWidth + 1;
@@ -124,7 +132,7 @@ function visualize() {
     let x = 0;
 
     dataArray.forEach(value => {
-      const barHeight = value / 1.4;
+      const barHeight = value / 2;
       ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
 
       x += barWidth + 1;
@@ -135,7 +143,7 @@ function visualize() {
   if (radioButton == 'Circles') {
 
     dataArray.forEach(value => {
-      const circleRadius = (value / 255) * 10;
+      const circleRadius = (value / 255) * 5;
       const x = Math.random() * canvas.width;
       const y = Math.random() * canvas.height;
       ctx.beginPath();
@@ -143,7 +151,7 @@ function visualize() {
       ctx.fill();
     })
   };
-
+  
   requestAnimationFrame(visualize);
 }
 
@@ -157,4 +165,22 @@ audioPlayer.addEventListener('ended', () => {
 
 audioPlayer.addEventListener("play", function() {
   visualize();
+});
+
+
+
+const animate = () => {
+  requestAnimationFrame(animate);
+  
+};
+animate();
+
+window.addEventListener('resize', () => {
+  const newWidth = window.innerWidth;
+  const newHeight = window.innerHeight;
+
+  camera.aspect = newWidth / newHeight;
+  camera.updateProjectionMatrix();
+
+  renderer.setSize(newWidth, newHeight);
 });
