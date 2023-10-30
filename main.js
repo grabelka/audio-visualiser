@@ -6,11 +6,15 @@ const audioPlayer = document.getElementById("audioPlayer");
 const linearGradientCheckbox = document.getElementById('linearGradientCheckbox');
 const radialGradientCheckbox = document.getElementById('radialGradientCheckbox');
 const radioButtons = document.getElementsByName('options');
+const recordButton = document.getElementById('recordButton');
+const recordedChunks = [];
+let recorded = false;
 let radioButton = 'Standard';
 let selectedFile = '';
 let audioContext = null;
 let analyser = null;
 let source = null;
+let mediaRecorder = null;
 
 const colorPicker = document.getElementById('colorPicker');
 let visualizerColor = colorPicker.value;
@@ -82,6 +86,28 @@ audioInput.addEventListener("change", function () {
     source = audioContext.createMediaElementSource(audioPlayer);
     source.connect(analyser);
     analyser.connect(audioContext.destination);
+
+    const canvasStream = canvas.captureStream(30);
+    // const audioStream = audioContext.createMediaStreamDestination().stream;
+    // const combinedStream = new MediaStream([...canvasStream.getTracks(), ...audioStream.getTracks()]);
+    mediaRecorder = new MediaRecorder(canvasStream);
+    mediaRecorder.ondataavailable = (event) => {
+      if (event.data.size > 0) {
+        recordedChunks.push(event.data);
+      }
+    };
+    
+    mediaRecorder.onstop = () => {
+      const blob = new Blob(recordedChunks, { type: 'video/webm' });
+      const videoUrl = URL.createObjectURL(blob);
+      const downloadLink = document.createElement('a');
+      downloadLink.href = videoUrl;
+      downloadLink.download = 'visualisation.webm'; 
+      downloadLink.style.display = 'none';
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+    };
   } else {
     alert("Please select an audio file.");
   }
@@ -114,36 +140,34 @@ function visualize() {
 
   // standard
   if (radioButton == 'Standard') {
-    const barWidth = (canvas.width / bufferLength) * 10;
+    const barWidth = (canvas.width / bufferLength) * 7;
     let x = 0;
 
     dataArray.forEach(value => {
-      const barHeight = value / 2;
+      const barHeight = value * 2;
       ctx.fillRect(x, (canvas.height - barHeight) / 2 , barWidth, barHeight);
-
-      x += barWidth + 1;
+      x += barWidth + 7;
     })
   };
   
 
   // bars
   if (radioButton == 'Bars') {
-    const barWidth = (canvas.width / bufferLength) * 10;
+    const barWidth = (canvas.width / bufferLength) * 7;
     let x = 0;
 
     dataArray.forEach(value => {
-      const barHeight = value / 2;
+      const barHeight = value * 3;
       ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
-
-      x += barWidth + 1;
+      x += barWidth + 7;
     })
   };
 
   // circles
   if (radioButton == 'Circles') {
-
-    dataArray.forEach(value => {
-      const circleRadius = (value / 255) * 5;
+    let sliceDataArray = dataArray.slice(0, 512);
+    sliceDataArray.forEach(value => {
+      const circleRadius = (value / 7);
       const x = Math.random() * canvas.width;
       const y = Math.random() * canvas.height;
       ctx.beginPath();
@@ -154,6 +178,17 @@ function visualize() {
   
   requestAnimationFrame(visualize);
 }
+
+recordButton.addEventListener('click', () => {
+  if (!recorded) {
+    recorded = true;
+    mediaRecorder.start(10);
+  } else {
+    recorded = false;
+    mediaRecorder.stop();
+    alert('Recording ended');
+  }
+});
 
 audioPlayer.addEventListener('pause', () => {
   cancelAnimationFrame(visualize);
@@ -167,20 +202,7 @@ audioPlayer.addEventListener("play", function() {
   visualize();
 });
 
-
-
 const animate = () => {
   requestAnimationFrame(animate);
-  
 };
 animate();
-
-window.addEventListener('resize', () => {
-  const newWidth = window.innerWidth;
-  const newHeight = window.innerHeight;
-
-  camera.aspect = newWidth / newHeight;
-  camera.updateProjectionMatrix();
-
-  renderer.setSize(newWidth, newHeight);
-});
