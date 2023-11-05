@@ -78,7 +78,7 @@ audioInput.addEventListener("change", function () {
     audioPlayer.src = "";
     const objectURL = URL.createObjectURL(selectedFile);
     audioPlayer.src = objectURL;
-    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 44100 });
     if (audioContext.state === 'suspended') {
       audioContext.resume();
     }
@@ -88,9 +88,15 @@ audioInput.addEventListener("change", function () {
     analyser.connect(audioContext.destination);
 
     const canvasStream = canvas.captureStream(30);
-    // const audioStream = audioContext.createMediaStreamDestination().stream;
-    // const combinedStream = new MediaStream([...canvasStream.getTracks(), ...audioStream.getTracks()]);
-    mediaRecorder = new MediaRecorder(canvasStream);
+    const audioStream = audioContext.createMediaStreamDestination().stream;
+    const mergedStream = new MediaStream();
+    mergedStream.addTrack(canvasStream.getVideoTracks()[0]);  
+    // mergedStream.addTrack(audioStream.getAudioTracks()[0]);
+    mediaRecorder = new MediaRecorder(mergedStream, {
+      mimeType: 'video/webm; codecs=vp9,opus',
+      audioBitsPerSecond: 128000,
+    });
+    
     mediaRecorder.ondataavailable = (event) => {
       if (event.data.size > 0) {
         recordedChunks.push(event.data);
@@ -150,7 +156,6 @@ function visualize() {
     })
   };
   
-
   // bars
   if (radioButton == 'Bars') {
     const barWidth = (canvas.width / bufferLength) * 7;
@@ -180,13 +185,21 @@ function visualize() {
 }
 
 recordButton.addEventListener('click', () => {
-  if (!recorded) {
-    recorded = true;
-    mediaRecorder.start(10);
-  } else {
-    recorded = false;
-    mediaRecorder.stop();
-    alert('Recording ended');
+  if (!mediaRecorder) {
+    alert('First, add a track');
+  }
+  else {
+    if (!recorded) {
+      recorded = true;
+      document.getElementById('record-dot').style.visibility = "visible";
+      recordedChunks.length = 0;
+      mediaRecorder.start();
+    } else {
+      recorded = false;
+      document.getElementById('record-dot').style.visibility = "hidden";
+      mediaRecorder.stop();
+      alert('Recording ended');
+    }
   }
 });
 

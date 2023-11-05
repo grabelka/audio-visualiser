@@ -1,5 +1,12 @@
 body {
   font-family: 'Roboto', sans-serif;
+  margin: 0;
+  font-size: larger;
+}
+
+h1 {
+  margin: 0;
+  font-weight: 400;
 }
 
 main {
@@ -21,13 +28,13 @@ canvas {
   width: 3em;
 }
 
-.title {
+.row {
   display: flex;
-  padding-bottom: 1em;
+  align-items: center;
 }
 
 .custom-file-upload {
-  font-size: large;
+  font-size: larger;
   display: inline-block;
   background-color: darksalmon;
   color: #fff;
@@ -35,8 +42,7 @@ canvas {
   cursor: pointer;
   border: 1px solid darksalmon;
   border-radius: 4px;
-  margin: 0.5em;
-  margin-left: -0.7em;
+  margin-right: 0.5em;
 }
 
 .custom-file-upload input[type="file"] {
@@ -138,6 +144,14 @@ canvas {
   font-weight: bold;
 }
 
+#record-dot {
+  width: 1em;
+  height: 1em;
+  background-color: rgba(255, 0, 0, 0.8);
+  border-radius: 100%;
+  visibility: hidden;
+}
+
 footer {
   position: fixed;
   bottom: 0;
@@ -156,6 +170,12 @@ footer {
 }
 
 @media (max-width: 768px) {
+  body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    font-size: medium;
+  }
+
   #icon {
     height: 2em;
     width: 2em;
