@@ -78,24 +78,17 @@ audioInput.addEventListener("change", function () {
     audioPlayer.src = "";
     const objectURL = URL.createObjectURL(selectedFile);
     audioPlayer.src = objectURL;
-    audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 44100 });
-    if (audioContext.state === 'suspended') {
-      audioContext.resume();
-    }
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    audioStream = audioContext.createMediaStreamDestination();
     analyser = audioContext.createAnalyser();
     source = audioContext.createMediaElementSource(audioPlayer);
-    source.connect(analyser);
     analyser.connect(audioContext.destination);
+    source.connect(audioStream);
+    source.connect(analyser);
 
-    const canvasStream = canvas.captureStream(30);
-    const audioStream = audioContext.createMediaStreamDestination().stream;
-    const mergedStream = new MediaStream();
-    mergedStream.addTrack(canvasStream.getVideoTracks()[0]);  
-    // mergedStream.addTrack(audioStream.getAudioTracks()[0]);
-    mediaRecorder = new MediaRecorder(mergedStream, {
-      mimeType: 'video/webm; codecs=vp9,opus',
-      audioBitsPerSecond: 128000,
-    });
+    const canvasStream = canvas.captureStream();
+    canvasStream.addTrack(audioStream.stream.getAudioTracks()[0]);
+    mediaRecorder = new MediaRecorder(canvasStream);
     
     mediaRecorder.ondataavailable = (event) => {
       if (event.data.size > 0) {
@@ -114,6 +107,7 @@ audioInput.addEventListener("change", function () {
       downloadLink.click();
       document.body.removeChild(downloadLink);
     };
+
   } else {
     alert("Please select an audio file.");
   }
@@ -190,11 +184,13 @@ recordButton.addEventListener('click', () => {
   }
   else {
     if (!recorded) {
+      recordButton.value = "Stop Recording";
       recorded = true;
       document.getElementById('record-dot').style.visibility = "visible";
       recordedChunks.length = 0;
       mediaRecorder.start();
     } else {
+      recordButton.value = "Start Recording";
       recorded = false;
       document.getElementById('record-dot').style.visibility = "hidden";
       mediaRecorder.stop();
